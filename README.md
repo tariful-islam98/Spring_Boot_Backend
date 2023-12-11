@@ -1,6 +1,6 @@
 # Practice Project
 
-Practice Project is a sample project for demonstrating a Spring Boot application with features like user management, post creation, and commenting.
+This Project is a sample project for demonstrating a Spring Boot application with features like user management, post creation, and commenting.
 
 ## Features
 
