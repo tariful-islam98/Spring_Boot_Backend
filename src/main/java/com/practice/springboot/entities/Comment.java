@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "comments")
 @Getter
@@ -18,6 +20,7 @@ public class Comment {
 
     @Column(nullable = false)
     private String content;
+    private Date timestamp;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
