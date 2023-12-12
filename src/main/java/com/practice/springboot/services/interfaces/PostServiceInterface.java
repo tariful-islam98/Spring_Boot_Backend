@@ -1,26 +1,27 @@
 package com.practice.springboot.services.interfaces;
 
 import com.practice.springboot.payloads.PostDto;
+import com.practice.springboot.payloads.PostResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PostServiceInterface {
 
-    PostDto createPost(PostDto postDto);
+    PostResponseDto createPost(PostDto postDto);
 
-    PostDto updatePost(PostDto postDto, Integer postId);
+    PostResponseDto updatePost(PostDto postDto, Integer postId);
 
     void deletePost(Integer postId);
 
-    Page<PostDto> getAllPost(Pageable pageable);
+    Page<PostResponseDto> getAllPost(Pageable pageable);
 
-    PostDto getPostById(Integer postId);
+    PostResponseDto getPostById(Integer postId);
 
-    Page<PostDto> getFilteredPosts(Integer categoryId, Integer userId, Pageable pageable);
+    Page<PostResponseDto> getFilteredPosts(Integer categoryId, Integer userId, Pageable pageable);
 
-    Page<PostDto> getPostsByCategory(Integer categoryId, Pageable pageable);
+    Page<PostResponseDto> getPostsByCategory(Integer categoryId, Pageable pageable);
 
-    Page<PostDto> getPostsByUser(Integer userId, Pageable pageable);
+    Page<PostResponseDto> getPostsByUser(Integer userId, Pageable pageable);
 
-    Page<PostDto> getPostsByCategoryAndUser(Integer categoryId, Integer userId, Pageable pageable);
+    Page<PostResponseDto> getPostsByCategoryAndUser(Integer categoryId, Integer userId, Pageable pageable);
 }

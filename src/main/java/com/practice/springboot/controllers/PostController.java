@@ -2,6 +2,7 @@ package com.practice.springboot.controllers;
 
 import com.practice.springboot.config.Constants;
 import com.practice.springboot.payloads.PostDto;
+import com.practice.springboot.payloads.PostResponseDto;
 import com.practice.springboot.services.interfaces.PostServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,14 @@ public class PostController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<PostDto> createPost(@RequestBody @Valid PostDto postDto) {
-        PostDto createPost = postService.createPost(postDto);
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody @Valid PostDto postDto) {
+        PostResponseDto createPost = postService.createPost(postDto);
         return new ResponseEntity<>(createPost, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{postId}")
-    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable Integer postId) {
-        PostDto updatePost = postService.updatePost(postDto, postId);
+    public ResponseEntity<PostResponseDto> updatePost(@RequestBody PostDto postDto, @PathVariable Integer postId) {
+        PostResponseDto updatePost = postService.updatePost(postDto, postId);
         return new ResponseEntity<>(updatePost, HttpStatus.OK);
     }
 
@@ -44,7 +45,7 @@ public class PostController {
     }
 
     @GetMapping({"", "/"})
-    public ResponseEntity<List<PostDto>> getAllPosts(
+    public ResponseEntity<List<PostResponseDto>> getAllPosts(
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Integer userId,
             @RequestParam(defaultValue = Constants.DEFAULT_OFFSET, required = false) Integer offset,
@@ -52,7 +53,7 @@ public class PostController {
             @RequestParam(defaultValue = Constants.DEFAULT_POST_SORT_BY, required = false) String sortBy) {
 
         try {
-            Page<PostDto> posts = postService.getFilteredPosts(categoryId, userId, PageRequest.of(offset, limit, Sort.by(sortBy)));
+            Page<PostResponseDto> posts = postService.getFilteredPosts(categoryId, userId, PageRequest.of(offset, limit, Sort.by(sortBy)));
             return new ResponseEntity<>(posts.getContent(), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more parameter is invalid!");
@@ -60,8 +61,8 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDto> getPostById(@PathVariable Integer postId) {
-        PostDto post = postService.getPostById(postId);
+    public ResponseEntity<PostResponseDto> getPostById(@PathVariable Integer postId) {
+        PostResponseDto post = postService.getPostById(postId);
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 }

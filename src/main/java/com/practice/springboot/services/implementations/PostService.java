@@ -4,12 +4,15 @@ import com.practice.springboot.entities.Category;
 import com.practice.springboot.entities.Post;
 import com.practice.springboot.entities.User;
 import com.practice.springboot.exceptions.NotNullViolationException;
+import com.practice.springboot.payloads.CategoryDto;
 import com.practice.springboot.payloads.PostDto;
+import com.practice.springboot.payloads.PostResponseDto;
 import com.practice.springboot.payloads.UserDto;
 import com.practice.springboot.repositories.CategoryRepo;
 import com.practice.springboot.repositories.PostRepo;
 import com.practice.springboot.services.interfaces.PostServiceInterface;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -40,7 +43,7 @@ public class PostService implements PostServiceInterface {
     }
 
     @Override
-    public PostDto createPost(PostDto postDto) {
+    public PostResponseDto createPost(PostDto postDto) {
         Post postEntity = modelMapper.map(postDto, Post.class);
 
         try {
@@ -56,7 +59,7 @@ public class PostService implements PostServiceInterface {
             try {
                 Post savedPost = postRepo.save(postEntity);
 
-                return convertToPostDtoWithCategories(savedPost);
+                return convertToPostResponseDto(savedPost);
             } catch (DataIntegrityViolationException e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post Title already exists", e);
             } catch (NotNullViolationException e) {
@@ -69,7 +72,7 @@ public class PostService implements PostServiceInterface {
     }
 
     @Override
-    public PostDto updatePost(PostDto postDto, Integer postId) {
+    public PostResponseDto updatePost(PostDto postDto, Integer postId) {
         Post post = postRepo.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found with id: " + postId));
 
@@ -100,7 +103,7 @@ public class PostService implements PostServiceInterface {
         try {
             Post updatedPost = postRepo.save(post);
 
-            return convertToPostDtoWithCategories(updatedPost);
+            return convertToPostResponseDto(updatedPost);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post Title already exists", e);
         } catch (NotNullViolationException e) {
@@ -117,22 +120,22 @@ public class PostService implements PostServiceInterface {
     }
 
     @Override
-    public Page<PostDto> getAllPost(Pageable pageable) {
+    public Page<PostResponseDto> getAllPost(Pageable pageable) {
         Page<Post> postList = postRepo.findAll(pageable);
 
-        return postList.map(this::convertToPostDtoWithCategories);
+        return postList.map(this::convertToPostResponseDto);
     }
 
     @Override
-    public PostDto getPostById(Integer postId) {
+    public PostResponseDto getPostById(Integer postId) {
         Post post = postRepo.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found with id: " + postId));
 
-        return convertToPostDtoWithCategories(post);
+        return convertToPostResponseDto(post);
     }
 
     @Override
-    public Page<PostDto> getFilteredPosts(Integer categoryId, Integer userId, Pageable pageable) {
+    public Page<PostResponseDto> getFilteredPosts(Integer categoryId, Integer userId, Pageable pageable) {
         try {
             if (categoryId != null && userId != null) {
                 return getPostsByCategoryAndUser(categoryId, userId, pageable);
@@ -149,26 +152,26 @@ public class PostService implements PostServiceInterface {
     }
 
     @Override
-    public Page<PostDto> getPostsByCategory(Integer categoryId, Pageable pageable) {
+    public Page<PostResponseDto> getPostsByCategory(Integer categoryId, Pageable pageable) {
         Category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found with id: " + categoryId));
 
         Page<Post> posts = postRepo.findPostsByCategoryId(categoryId, pageable);
 
-        return posts.map(this::convertToPostDtoWithCategories);
+        return posts.map(this::convertToPostResponseDto);
     }
 
     @Override
-    public Page<PostDto> getPostsByUser(Integer userId, Pageable pageable) {
+    public Page<PostResponseDto> getPostsByUser(Integer userId, Pageable pageable) {
         UserDto userDto = userService.getUserById(userId);
 
         Page<Post> posts = postRepo.findPostsByUserId(userId, pageable);
 
-        return posts.map(this::convertToPostDtoWithCategories);
+        return posts.map(this::convertToPostResponseDto);
     }
 
     @Override
-    public Page<PostDto> getPostsByCategoryAndUser(Integer categoryId, Integer userId, Pageable pageable) {
+    public Page<PostResponseDto> getPostsByCategoryAndUser(Integer categoryId, Integer userId, Pageable pageable) {
         Category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found with id: " + categoryId));
 
@@ -176,13 +179,12 @@ public class PostService implements PostServiceInterface {
 
         Page<Post> posts = postRepo.findPostsByCategoryAndUser(categoryId, userId, pageable);
 
-        return posts.map(this::convertToPostDtoWithCategories);
+        return posts.map(this::convertToPostResponseDto);
     }
 
-    private PostDto convertToPostDtoWithCategories(Post post) {
-        List<Integer> categoryIds = post.getCategories().stream().map(Category::getCategoryId).collect(Collectors.toList());
-        PostDto postDto = modelMapper.map(post, PostDto.class);
-        postDto.setCategoryIds(categoryIds);
-        return postDto;
+    private PostResponseDto convertToPostResponseDto(Post post) {
+        PostResponseDto postResponseDto = modelMapper.map(post, PostResponseDto.class);
+        postResponseDto.setCategories(modelMapper.map(post.getCategories(), new TypeToken<List<CategoryDto>>() {}.getType()));
+        return postResponseDto;
     }
 }
