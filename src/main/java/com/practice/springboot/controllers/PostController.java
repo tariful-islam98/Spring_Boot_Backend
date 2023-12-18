@@ -1,6 +1,6 @@
 package com.practice.springboot.controllers;
 
-import com.practice.springboot.config.Constants;
+import com.practice.springboot.utils.Constants;
 import com.practice.springboot.payloads.PostDto;
 import com.practice.springboot.payloads.PostResponseDto;
 import com.practice.springboot.services.interfaces.PostServiceInterface;
