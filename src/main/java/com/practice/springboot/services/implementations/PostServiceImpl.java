@@ -10,7 +10,7 @@ import com.practice.springboot.payloads.PostResponseDto;
 import com.practice.springboot.payloads.UserDto;
 import com.practice.springboot.repositories.CategoryRepo;
 import com.practice.springboot.repositories.PostRepo;
-import com.practice.springboot.services.interfaces.PostServiceInterface;
+import com.practice.springboot.services.interfaces.PostService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +24,17 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Service
-public class PostService implements PostServiceInterface {
+public class PostServiceImpl implements PostService {
 
     private PostRepo postRepo;
     private ModelMapper modelMapper;
-    private UserService userService;
+    private UserServiceImpl userService;
     private CategoryRepo categoryRepo;
 
     @Autowired
-    public PostService(PostRepo postRepo, ModelMapper modelMapper, UserService userService, CategoryRepo categoryRepo) {
+    public PostServiceImpl(PostRepo postRepo, ModelMapper modelMapper, UserServiceImpl userService, CategoryRepo categoryRepo) {
         this.postRepo = postRepo;
         this.modelMapper = modelMapper;
         this.userService = userService;

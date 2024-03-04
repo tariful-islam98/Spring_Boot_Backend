@@ -3,7 +3,7 @@ package com.practice.springboot.controllers;
 import com.practice.springboot.utils.Constants;
 import com.practice.springboot.payloads.PostDto;
 import com.practice.springboot.payloads.PostResponseDto;
-import com.practice.springboot.services.interfaces.PostServiceInterface;
+import com.practice.springboot.services.interfaces.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,10 +19,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
-    private final PostServiceInterface postService;
+    private final PostService postService;
 
     @Autowired
-    public PostController(PostServiceInterface postService) {
+    public PostController(PostService postService) {
         this.postService = postService;
     }
 

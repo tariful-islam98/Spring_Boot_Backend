@@ -5,7 +5,7 @@ import com.practice.springboot.payloads.PostResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface PostServiceInterface {
+public interface PostService {
 
     PostResponseDto createPost(PostDto postDto);
 

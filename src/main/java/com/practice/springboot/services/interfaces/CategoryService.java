@@ -4,7 +4,7 @@ import com.practice.springboot.payloads.CategoryDto;
 
 import java.util.List;
 
-public interface CategoryServiceInterface {
+public interface CategoryService {
 
     CategoryDto createCategory(CategoryDto categoryDto);
 

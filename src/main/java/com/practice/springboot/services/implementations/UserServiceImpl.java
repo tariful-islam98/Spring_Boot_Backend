@@ -2,9 +2,11 @@ package com.practice.springboot.services.implementations;
 
 import com.practice.springboot.entities.User;
 import com.practice.springboot.exceptions.NotNullViolationException;
+import com.practice.springboot.payloads.RoleDto;
 import com.practice.springboot.payloads.UserDto;
 import com.practice.springboot.repositories.UserRepo;
-import com.practice.springboot.services.interfaces.UserServiceInterface;
+import com.practice.springboot.services.interfaces.RoleService;
+import com.practice.springboot.services.interfaces.UserService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService implements UserServiceInterface {
+public class UserServiceImpl implements UserService {
 
     private UserRepo userRepo;
     private ModelMapper modelMapper;
+    private RoleService roleService;
 
     @Autowired
-    public UserService(UserRepo userRepo, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepo userRepo, ModelMapper modelMapper) {
         this.userRepo = userRepo;
         this.modelMapper = modelMapper;
     }
@@ -99,6 +103,15 @@ public class UserService implements UserServiceInterface {
         userRepo.delete(user);
     }
 
+
+
+    @Override
+    public UserDto getUserByEmail(String email) {
+        User userEntity = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with email: " + email));
+        return modelMapper.map(userEntity, UserDto.class);
+    }
+
     private void validateNotNullFields(UserDto user) {
         if (user.getName() == null || user.getName().isBlank()) {
             throw new NotNullViolationException("Error creating user: name field is required and cannot be blank", HttpStatus.BAD_REQUEST);
@@ -108,6 +121,12 @@ public class UserService implements UserServiceInterface {
         }
         if (user.getPassword() == null || user.getPassword().isBlank()) {
             throw new NotNullViolationException("Error creating user: password field is required and cannot be blank", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private void validateUserRolesExists(Set<RoleDto> roles){
+        for(RoleDto role : roles){
+            RoleDto dbRole = roleService.getRoleById(role.getRoleId());
         }
     }
 }

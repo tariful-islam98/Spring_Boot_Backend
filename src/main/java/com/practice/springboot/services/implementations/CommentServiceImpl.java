@@ -8,7 +8,7 @@ import com.practice.springboot.payloads.CommentDto;
 import com.practice.springboot.payloads.PostResponseDto;
 import com.practice.springboot.payloads.UserDto;
 import com.practice.springboot.repositories.CommentRepo;
-import com.practice.springboot.services.interfaces.CommentServiceInterface;
+import com.practice.springboot.services.interfaces.CommentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,18 +20,18 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Date;
 
 @Service
-public class CommentService implements CommentServiceInterface {
+public class CommentServiceImpl implements CommentService {
     private CommentRepo commentRepo;
     private ModelMapper modelMapper;
-    private UserService userService;
-    private PostService postService;
+    private UserServiceImpl userService;
+    private PostServiceImpl postServiceImpl;
 
     @Autowired
-    public CommentService(CommentRepo commentRepo, ModelMapper modelMapper, UserService userService, PostService postService) {
+    public CommentServiceImpl(CommentRepo commentRepo, ModelMapper modelMapper, UserServiceImpl userService, PostServiceImpl postServiceImpl) {
         this.commentRepo = commentRepo;
         this.modelMapper = modelMapper;
         this.userService = userService;
-        this.postService = postService;
+        this.postServiceImpl = postServiceImpl;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class CommentService implements CommentServiceInterface {
         Comment commentEntity = modelMapper.map(commentDto, Comment.class);
 
         UserDto userDto = userService.getUserById(commentDto.getUserId());
-        PostResponseDto postDto = postService.getPostById(commentDto.getPostId());
+        PostResponseDto postDto = postServiceImpl.getPostById(commentDto.getPostId());
 
         commentEntity.setUser(modelMapper.map(userDto, User.class));
         commentEntity.setPost(modelMapper.map(postDto, Post.class));
@@ -114,7 +114,7 @@ public class CommentService implements CommentServiceInterface {
 
     @Override
     public Page<CommentDto> getCommentsForPost(Integer postId, Pageable pageable) {
-        PostResponseDto postResponseDto = postService.getPostById(postId);
+        PostResponseDto postResponseDto = postServiceImpl.getPostById(postId);
         Page<Comment> comments = commentRepo.findByPostId(postId, pageable);
 
         return comments.map(comment -> modelMapper.map(comment, CommentDto.class));
@@ -130,7 +130,7 @@ public class CommentService implements CommentServiceInterface {
 
     @Override
     public Page<CommentDto> getCommentsByPostAndUser(Integer postId, Integer userId, Pageable pageable) {
-        postService.getPostById(postId);
+        postServiceImpl.getPostById(postId);
         userService.getUserById(userId);
         Page<Comment> comments = commentRepo.findByPostAndUser(postId, userId, pageable);
         

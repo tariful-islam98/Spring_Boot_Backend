@@ -4,7 +4,7 @@ import com.practice.springboot.payloads.UserDto;
 
 import java.util.List;
 
-public interface UserServiceInterface {
+public interface UserService {
 
     UserDto createUser(UserDto user);
 
@@ -16,4 +16,5 @@ public interface UserServiceInterface {
 
     void deleteUser(Integer userId);
 
+    UserDto getUserByEmail(String email);
 }

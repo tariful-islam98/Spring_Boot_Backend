@@ -1,11 +1,15 @@
 package com.practice.springboot.payloads;
 
+import com.practice.springboot.utils.RoleType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -20,4 +24,5 @@ public class UserDto {
     @NotEmpty(message = "Password cannot be null or empty!")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@#$!%*?&]{8,}$", message = "Password should be at least 8 characters with at 1 lower case, 1 upper case, 1 digit, and 1 special character")
     private String password;
+    private Set<RoleDto> roles;
 }

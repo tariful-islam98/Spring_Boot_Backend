@@ -4,7 +4,7 @@ import com.practice.springboot.entities.Category;
 import com.practice.springboot.exceptions.NotNullViolationException;
 import com.practice.springboot.payloads.CategoryDto;
 import com.practice.springboot.repositories.CategoryRepo;
-import com.practice.springboot.services.interfaces.CategoryServiceInterface;
+import com.practice.springboot.services.interfaces.CategoryService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CategoryService implements CategoryServiceInterface {
+public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepo categoryRepo;
     private ModelMapper modelMapper;
 
     @Autowired
-    public CategoryService(CategoryRepo categoryRepo, ModelMapper modelMapper) {
+    public CategoryServiceImpl(CategoryRepo categoryRepo, ModelMapper modelMapper) {
         this.categoryRepo = categoryRepo;
         this.modelMapper = modelMapper;
     }
